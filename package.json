@@ -1,0 +1,72 @@
+{
+  "name": "pub-points-mcp",
+  "version": "0.1.0",
+  "description": "Ask your AI assistant about your pub points. An unofficial MCP server for The Pass (Australian Venue Co): points, deals, offers, orders and open venues.",
+  "license": "GPL-3.0-or-later",
+  "author": "trammel (https://github.com/trammel)",
+  "homepage": "https://github.com/trammel/pub-points-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trammel/pub-points-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/trammel/pub-points-mcp/issues"
+  },
+  "type": "module",
+  "bin": {
+    "pub-points-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.d.ts",
+    "LICENSE",
+    "README.md",
+    "CHANGELOG.md",
+    "npm-shrinkwrap.json"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node -e \"require('node:fs').chmodSync('dist/index.js', 0o755)\"",
+    "prepare": "npm run build",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p test/tsconfig.json && tsc -p scripts/tsconfig.json",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run build && npm run typecheck && npm run lint && npm run format:check && npm run lint:package && npm run knip && npm run coverage",
+    "doctor": "node dist/index.js doctor",
+    "prepublishOnly": "npm test",
+    "lint:package": "publint --strict",
+    "knip": "knip",
+    "coverage": "node scripts/coverage.ts",
+    "coverage:ratchet": "node scripts/coverage.ts --ratchet",
+    "smoke": "node scripts/pack-smoke.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.4.0",
+    "amazon-cognito-identity-js": "6.3.22",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@modelcontextprotocol/client": "^2.4.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.14.0",
+    "knip": "^6.44.1",
+    "prettier": "^3.9.10",
+    "publint": "^0.3.25",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "mcp-server",
+    "the-pass",
+    "loyalty",
+    "pubs"
+  ]
+}

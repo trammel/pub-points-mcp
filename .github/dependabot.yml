@@ -1,0 +1,25 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      # One PR a week for the dev toolchain; each runtime dependency gets its own PR, since those reach users.
+      dev-dependencies:
+        dependency-type: development
+    ignore:
+      # Types must match the oldest Node in `engines` (22), or code could use APIs that Node 22 lacks and still compile.
+      - dependency-name: '@types/node'
+        update-types: ['version-update:semver-major']
+      # typescript-eslint 8 supports TypeScript below 6.1 only; npm ci fails on anything newer. Lift this when it does.
+      - dependency-name: typescript
+        versions: ['>=6.1.0']
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      actions:
+        patterns: ['*']

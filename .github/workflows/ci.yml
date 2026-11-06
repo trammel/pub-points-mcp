@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        # 22 is the oldest supported (engines); the tests need 22.18+, which `22` resolves to. 24 is .nvmrc.
+        node: ['22', '24']
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - run: npm ci
+      # Build, typecheck, ESLint, Prettier, publint, knip, then the tests held to the coverage floor.
+      - run: npm test
+      # Only what users install; dev tooling advisories don't reach them.
+      - run: npm audit --omit=dev --audit-level=high
+      # Installs the packed tarball into an empty folder and runs the binary.
+      - run: npm run smoke
